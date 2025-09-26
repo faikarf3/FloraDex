@@ -18,7 +18,7 @@ export default function LoginScreen() {
   const [password, setPassword] = useState('');
   const [isSignUp, setIsSignUp] = useState(false);
   const [loading, setLoading] = useState(false);
-  const { signIn, signUp } = useAuth();
+  const { signIn, signUp, signInWithGoogle } = useAuth();
 
   const handleAuth = async () => {
     if (!email || !password) {
@@ -42,6 +42,17 @@ export default function LoginScreen() {
     }
   };
 
+  const handleGoogleSignIn = async () => {
+    setLoading(true);
+    try {
+      await signInWithGoogle();
+    } catch (error: any) {
+      Alert.alert('Error', error.message || 'Google Sign-In failed');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <KeyboardAvoidingView
       style={styles.container}
@@ -50,7 +61,7 @@ export default function LoginScreen() {
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <View style={styles.formContainer}>
           <Text style={styles.title}>
-            {isSignUp ? 'Create Account' : 'Welcome Back'}
+            {isSignUp ? 'Create Account' : 'Welcome to FloraDex'}
           </Text>
           <Text style={styles.subtitle}>
             {isSignUp ? 'Sign up to get started' : 'Sign in to your account'}
@@ -90,6 +101,25 @@ export default function LoginScreen() {
               {loading ? 'Loading...' : (isSignUp ? 'Sign Up' : 'Sign In')}
             </Text>
           </TouchableOpacity>
+
+          {/* <View style={styles.dividerContainer}>
+            <View style={styles.dividerLine} />
+            <Text style={styles.dividerText}>or</Text>
+            <View style={styles.dividerLine} />
+          </View> */}
+
+          {/* <TouchableOpacity
+            style={[styles.googleButton, loading && styles.buttonDisabled]}
+            onPress={handleGoogleSignIn}
+            disabled={loading}
+          >
+            <View style={styles.googleButtonContent}>
+              <View style={styles.googleLogo}>
+                <Text style={styles.googleLogoText}>G</Text>
+              </View>
+              <Text style={styles.googleButtonText}>Continue with Google</Text>
+            </View>
+          </TouchableOpacity> */}
 
           <TouchableOpacity
             style={styles.switchButton}
@@ -196,6 +226,63 @@ const styles = StyleSheet.create({
   },
   switchText: {
     color: colors.buttons,
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  dividerContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: 24,
+  },
+  dividerLine: {
+    flex: 1,
+    height: 1,
+    backgroundColor: colors.border,
+  },
+  dividerText: {
+    marginHorizontal: 16,
+    color: colors.text.secondary,
+    fontSize: 14,
+    fontWeight: '500',
+  },
+  googleButton: {
+    backgroundColor: colors.background,
+    borderRadius: 12,
+    padding: 18,
+    alignItems: 'center',
+    marginTop: 8,
+    borderWidth: 2,
+    borderColor: colors.border,
+    shadowColor: colors.navbar,
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 4,
+  },
+  googleButtonContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  googleLogo: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    backgroundColor: '#fefae0',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 12,
+  },
+  googleLogoText: {
+    color: '#0a400c',
+    fontSize: 17,
+    fontWeight: 'bold',
+  },
+  googleButtonText: {
+    color: colors.text.primary,
     fontSize: 16,
     fontWeight: '600',
   },

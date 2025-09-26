@@ -17,23 +17,43 @@ export default function SplashScreen() {
   
   const fadeAnim = new Animated.Value(0);
   const scaleAnim = new Animated.Value(0.8);
+  const pulseAnim = new Animated.Value(1);
 
   useEffect(() => {
     if (fontsLoaded) {
-      // Animate the text appearance
-      Animated.parallel([
-        Animated.timing(fadeAnim, {
-          toValue: 1,
-          duration: 1000,
-          useNativeDriver: true,
-        }),
-        Animated.spring(scaleAnim, {
-          toValue: 1,
-          tension: 50,
-          friction: 7,
-          useNativeDriver: true,
-        }),
-      ]).start();
+      // Animate the text appearance with a slight delay for smoother effect
+      setTimeout(() => {
+        Animated.parallel([
+          Animated.timing(fadeAnim, {
+            toValue: 1,
+            duration: 1200,
+            useNativeDriver: true,
+          }),
+          Animated.spring(scaleAnim, {
+            toValue: 1,
+            tension: 40,
+            friction: 8,
+            useNativeDriver: true,
+          }),
+        ]).start(() => {
+          // Start subtle pulse animation after text appears
+          const pulse = Animated.loop(
+            Animated.sequence([
+              Animated.timing(pulseAnim, {
+                toValue: 1.05,
+                duration: 2000,
+                useNativeDriver: true,
+              }),
+              Animated.timing(pulseAnim, {
+                toValue: 1,
+                duration: 2000,
+                useNativeDriver: true,
+              }),
+            ])
+          );
+          pulse.start();
+        });
+      }, 200);
     }
   }, [fontsLoaded]);
 
@@ -52,7 +72,9 @@ export default function SplashScreen() {
           styles.title,
           {
             opacity: fadeAnim,
-            transform: [{ scale: scaleAnim }],
+            transform: [
+              { scale: Animated.multiply(scaleAnim, pulseAnim) }
+            ],
           },
         ]}
       >
