@@ -11,6 +11,10 @@
     "ios": {
       "supportsTablet": true
     },
+    "fonts": [
+      "assets/fonts/BitcountSingleInk-Regular.ttf"
+    ],
+    
     "android": {
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
