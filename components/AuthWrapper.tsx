@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { View, ActivityIndicator, StyleSheet } from 'react-native';
 import { useAuth } from '../contexts/AuthContext';
-import LoginScreen from './LoginScreen';
-import DashboardScreen from './DashboardScreen';
-import SplashScreen from './SplashScreen';
+import LoginScreen from '../app/LoginScreen';
+import DashboardScreen from '../app/DashboardScreen';
+import SplashScreen from '../app/SplashScreen';
 import { colors } from '../constants/colors';
 
 export default function AuthWrapper() {

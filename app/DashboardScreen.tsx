@@ -9,9 +9,13 @@ import {
 } from 'react-native';
 import { useAuth } from '../contexts/AuthContext';
 import { colors } from '../constants/colors';
+import { useRouter } from "expo-router";
+
+
 
 export default function DashboardScreen() {
   const { user, logout } = useAuth();
+  const router = useRouter();
 
   const handleLogout = async () => {
     try {
@@ -76,6 +80,7 @@ export default function DashboardScreen() {
             🌍 Community plant sharing
           </Text>
         </View>
+        
 
         <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
           <Text style={styles.logoutButtonText}>Logout</Text>

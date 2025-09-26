@@ -11,7 +11,17 @@ export default function RootLayout() {
   return (
     <ThemeProvider value={DefaultTheme}>
       <Stack>
+        {/* Tabs group (main dashboard + other tabs) */}
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+
+        {/* Modal screen */}
+        <Stack.Screen
+          name="add-plant-modal"
+          options={{
+            presentation: 'modal', // 👈 makes it slide up like Twitter compose
+            headerShown: false,
+          }}
+        />
       </Stack>
       <StatusBar style="auto" />
     </ThemeProvider>
