@@ -15,31 +15,32 @@ This project includes a simple login page and dashboard for testing Firebase aut
    - Add a new app (Web app)
    - Copy the Firebase configuration object
 
-3. **Update Firebase Config**
-   - Open `config/firebase.ts`
-   - Replace the placeholder values with your actual Firebase config:
-
-```typescript
-const firebaseConfig = {
-  apiKey: "AIzaSyBthQKqbpFXwNbNV-OEwYCVbZN0703JWec",
-  authDomain: "floradex-1d428.firebaseapp.com",
-  projectId: "floradex-1d428",
-  storageBucket: "floradex-1d428.firebasestorage.app",
-  messagingSenderId: "927875530261",
-  appId: "1:927875530261:web:a4688b260c9c51df19d81c",
-  measurementId: "G-KFFFK7NZF5"
-};
-```
+3. **Populate Environment Variables**
+   - Duplicate `.env` to `.env.local` (already gitignored) and update the values there
+   - Paste the Firebase config values into the matching `EXPO_PUBLIC_FIREBASE_*` keys
+   - Share the `.env.local` contents securely with the team (never commit it)
 
 4. **Enable Email/Password Authentication**
    - In Firebase Console, go to Authentication > Sign-in method
    - Enable "Email/Password" provider
    - Save the changes
 
-5. **Test the App**
-   - Run `npm start` or `expo start`
-   - Try creating a new account with email/password
-   - Test logging in and out
+5. **Enable Google Authentication**
+   - In the same Sign-in method screen, enable the **Google** provider
+   - Complete the OAuth consent screen (name, support email, scopes) and add everyone’s Google account under **Test users** until you publish
+   - In Google Cloud Console > Credentials, edit the **Web** client and add these:
+     - Authorized JavaScript origins: your Expo web URL (e.g. `http://localhost:19006`) and any deployed domains
+     - Authorized redirect URIs: `https://floradex-1d428.firebaseapp.com/__/auth/handler` and `https://auth.expo.io/FloraDex/FloraDex`
+   - Create native iOS / Android OAuth clients if you want to avoid the Expo proxy and drop the IDs into:
+     - `EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID` (Optional for now)
+     - `EXPO_PUBLIC_GOOGLE_ANDROID_CLIENT_ID` ((Optional for now))
+   - Always keep `EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID` populated; it is required on every platform
+
+   > Replace `YOUR_EXPO_USERNAME` with the Expo account/slug defined in `app.json` under `expo.slug`.
+
+6. **Install Dependencies & Test the App**
+   - Run `npm install` (first time only) and then `npm start` or `expo start`
+   - Test email/password sign up + sign in, and verify Google Sign-In on the platforms you target
 
 ## Features
 

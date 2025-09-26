@@ -9,6 +9,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
+  ActivityIndicator,
 } from 'react-native';
 import { useAuth } from '../contexts/AuthContext';
 import { colors } from '../constants/colors';
@@ -18,7 +19,8 @@ export default function LoginScreen() {
   const [password, setPassword] = useState('');
   const [isSignUp, setIsSignUp] = useState(false);
   const [loading, setLoading] = useState(false);
-  const { signIn, signUp } = useAuth();
+  const [googleLoading, setGoogleLoading] = useState(false);
+  const { signIn, signUp, signInWithGoogle } = useAuth();
 
   const handleAuth = async () => {
     if (!email || !password) {
@@ -39,6 +41,23 @@ export default function LoginScreen() {
       Alert.alert('Error', error.message || 'Authentication failed');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleGoogleSignIn = async () => {
+    setGoogleLoading(true);
+    try {
+      await signInWithGoogle();
+      Alert.alert('Success', 'Signed in with Google successfully!');
+    } catch (error: any) {
+      const message = error?.message || 'Google sign-in failed';
+      if (message.includes('cancelled') || message.includes('canceled')) {
+        // Avoid showing an alert for cancellations initiated by the user.
+        return;
+      }
+      Alert.alert('Error', message);
+    } finally {
+      setGoogleLoading(false);
     }
   };
 
@@ -100,6 +119,24 @@ export default function LoginScreen() {
                 ? 'Already have an account? Sign In'
                 : "Don't have an account? Sign Up"}
             </Text>
+          </TouchableOpacity>
+
+          <View style={styles.dividerContainer}>
+            <View style={styles.divider} />
+            <Text style={styles.dividerText}>or</Text>
+            <View style={styles.divider} />
+          </View>
+
+          <TouchableOpacity
+            style={[styles.googleButton, (googleLoading || loading) && styles.buttonDisabled]}
+            onPress={handleGoogleSignIn}
+            disabled={googleLoading || loading}
+          >
+            {googleLoading ? (
+              <ActivityIndicator color={colors.text.light} />
+            ) : (
+              <Text style={styles.googleButtonText}>Continue with Google</Text>
+            )}
           </TouchableOpacity>
         </View>
       </ScrollView>
@@ -198,5 +235,33 @@ const styles = StyleSheet.create({
     color: colors.buttons,
     fontSize: 16,
     fontWeight: '600',
+  },
+  dividerContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: 24,
+  },
+  divider: {
+    flex: 1,
+    height: 1,
+    backgroundColor: colors.border,
+  },
+  dividerText: {
+    marginHorizontal: 12,
+    color: colors.text.secondary,
+    fontSize: 14,
+    textTransform: 'uppercase',
+    letterSpacing: 1,
+  },
+  googleButton: {
+    backgroundColor: colors.text.primary,
+    borderRadius: 12,
+    padding: 18,
+    alignItems: 'center',
+  },
+  googleButtonText: {
+    color: colors.text.light,
+    fontSize: 18,
+    fontWeight: '700',
   },
 });
