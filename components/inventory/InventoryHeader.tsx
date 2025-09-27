@@ -1,4 +1,4 @@
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 interface InventoryHeaderProps {
@@ -8,42 +8,34 @@ interface InventoryHeaderProps {
 
 export default function InventoryHeader({ onSearchPress, onFilterPress }: InventoryHeaderProps) {
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
+    <SafeAreaView edges={['top']}>
       <View style={styles.headerContent}>
         <View style={styles.titleContainer}>
-          <Text style={styles.title}>Forest</Text>
+          <Text style={styles.title}>Your Garden</Text>
         </View>
         
-        <TouchableOpacity 
-          style={styles.profileButton} 
-          onPress={onFilterPress}
-          activeOpacity={0.7}
-        >
-          <Text style={styles.profileIcon}>👤</Text>
-        </TouchableOpacity>
+        
       </View>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    backgroundColor: '#FFFFFF',
-  },
   headerContent: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 20,
     paddingVertical: 16,
   },
   titleContainer: {
     flex: 1,
+    alignItems: 'center',
   },
   title: {
     fontSize: 32,
     fontWeight: 'bold',
-    color: '#333333',
+    color: '#fefae0',
+    textAlign: 'center',
   },
   profileButton: {
     width: 40,

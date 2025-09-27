@@ -38,12 +38,12 @@ const styles = StyleSheet.create({
   statNumber: {
     fontSize: 28,
     fontWeight: 'bold',
-    color: '#333333',
+    color: '#fefae0',
     marginBottom: 4,
   },
   statLabel: {
     fontSize: 14,
-    color: '#666666',
+    color: '#fefae0',
     textAlign: 'center',
   },
 });
