@@ -1,18 +1,19 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
-import {
-  User,
-  onAuthStateChanged,
-  signInWithEmailAndPassword,
-  createUserWithEmailAndPassword,
-  signOut,
-  GoogleAuthProvider,
-  signInWithCredential,
-  signInWithPopup,
-} from 'firebase/auth';
-import * as WebBrowser from 'expo-web-browser';
 import * as Google from 'expo-auth-session/providers/google';
+import * as WebBrowser from 'expo-web-browser';
+import {
+  GoogleAuthProvider,
+  User,
+  createUserWithEmailAndPassword,
+  onAuthStateChanged,
+  signInWithCredential,
+  signInWithEmailAndPassword,
+  signInWithPopup,
+  signOut,
+} from 'firebase/auth';
+import React, { createContext, useContext, useEffect, useState } from 'react';
 import { Platform } from 'react-native';
 import { auth } from '../config/firebase';
+import { createUserProfile } from '../services/user';
 
 interface AuthContextType {
   user: User | null;
@@ -79,7 +80,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const signUp = async (email: string, password: string) => {
     try {
-      await createUserWithEmailAndPassword(auth, email, password);
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      // Create user profile in Firestore after successful authentication
+      await createUserProfile(userCredential.user);
     } catch (error) {
       throw error;
     }
@@ -93,7 +96,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       if (Platform.OS === 'web') {
         const provider = new GoogleAuthProvider();
-        await signInWithPopup(auth, provider);
+        const result = await signInWithPopup(auth, provider);
+        // Create user profile for Google sign-in
+        if (result.user) {
+          await createUserProfile(result.user);
+        }
         return;
       }
 
@@ -110,23 +117,27 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
       }
 
-      const result = await promptGoogleSignIn({ useProxy: shouldUseProxy });
+      const authResult = await promptGoogleSignIn();
 
-      if (result.type !== 'success') {
-        if (result.type === 'error') {
-          throw new Error(result.error?.message || 'Google sign-in failed.');
+      if (authResult.type !== 'success') {
+        if (authResult.type === 'error') {
+          throw new Error(authResult.error?.message || 'Google sign-in failed.');
         }
         throw new Error('Google sign-in was cancelled.');
       }
 
-      const idToken = result.params?.id_token || result.authentication?.idToken;
+      const idToken = authResult.params?.id_token || authResult.authentication?.idToken;
 
       if (!idToken) {
         throw new Error('Unable to retrieve Google identity token.');
       }
 
       const credential = GoogleAuthProvider.credential(idToken);
-      await signInWithCredential(auth, credential);
+      const userCredential = await signInWithCredential(auth, credential);
+      // Create user profile for Google sign-in
+      if (userCredential.user) {
+        await createUserProfile(userCredential.user);
+      }
     } catch (error) {
       throw error;
     }
