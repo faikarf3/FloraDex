@@ -6,8 +6,12 @@ import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-nati
 interface IdentificationResult {
   label: string;
   score: number;
+  scientificName: string;
+  commonNames?: string[];
+  family?: string;
+  genus?: string;
 }
-
+                  
 interface IdentificationResultsProps {
   results: IdentificationResult[];
   onAddToInventory: (result: IdentificationResult) => void;
@@ -48,6 +52,16 @@ export const IdentificationResults: React.FC<IdentificationResultsProps> = ({
                 <Text style={styles.plantName} numberOfLines={2}>
                   {result.label}
                 </Text>
+                {result.commonNames && result.commonNames.length > 0 && (
+                  <Text style={styles.commonName} numberOfLines={1}>
+                    {result.commonNames[0]}
+                  </Text>
+                )}
+                {result.family && (
+                  <Text style={styles.taxonomy} numberOfLines={1}>
+                    Family: {result.family}
+                  </Text>
+                )}
                 <View style={styles.confidenceContainer}>
                   <View 
                     style={[
@@ -128,8 +142,21 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '600',
     color: colors.text.primary,
-    marginBottom: 8,
+    marginBottom: 4,
     lineHeight: 24,
+  },
+  commonName: {
+    fontSize: 14,
+    color: colors.text.primary,
+    opacity: 0.8,
+    marginBottom: 2,
+    fontStyle: 'italic',
+  },
+  taxonomy: {
+    fontSize: 12,
+    color: colors.text.primary,
+    opacity: 0.6,
+    marginBottom: 8,
   },
   confidenceContainer: {
     flexDirection: 'row',

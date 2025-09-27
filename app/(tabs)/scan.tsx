@@ -5,10 +5,8 @@ import {
   ImagePreview,
   LoadingOverlay,
 } from "@/components/addPlants";
-import { auth } from "@/config/firebase";
 import { colors } from "@/constants/colors";
-import { identifyByUrl } from "@/services/identify";
-import { uploadTempScan } from "@/services/storage";
+import { identifyPlant } from "@/services/plantnet";
 import * as ImagePicker from "expo-image-picker";
 import { useState } from "react";
 import { Alert, ScrollView, StyleSheet } from "react-native";
@@ -17,6 +15,10 @@ import { SafeAreaView } from "react-native-safe-area-context";
 interface IdentificationResult {
   label: string;
   score: number;
+  scientificName: string;
+  commonNames?: string[];
+  family?: string;
+  genus?: string;
 }
 
 export default function Scan() {
@@ -28,9 +30,10 @@ export default function Scan() {
     try {
       const res = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        quality: 0.9,
+        quality: 0.8, // Good quality for PlantNet
         allowsEditing: true,
         aspect: [1, 1],
+        exif: false, // Remove EXIF data for privacy
       });
       if (!res.canceled) {
         setPreview(res.assets[0].uri);
@@ -44,9 +47,10 @@ export default function Scan() {
   const takePhoto = async () => {
     try {
       const res = await ImagePicker.launchCameraAsync({
-        quality: 0.9,
+        quality: 0.8, // Good quality for PlantNet
         allowsEditing: true,
         aspect: [1, 1],
+        exif: false, // Remove EXIF data for privacy
       });
       if (!res.canceled) {
         setPreview(res.assets[0].uri);
@@ -60,21 +64,39 @@ export default function Scan() {
   const runIdentify = async () => {
     try {
       if (!preview) return;
-      if (!auth.currentUser) {
-        Alert.alert("Sign in required", "Please sign in to identify plants");
-        return;
-      }
       
       setLoading(true);
       setResults(null);
       
-      const { downloadUrl } = await uploadTempScan(auth.currentUser.uid, preview);
-      const data = await identifyByUrl(downloadUrl, "leaf");
+      // Get PlantNet API key from environment
+      const apiKey = process.env.EXPO_PUBLIC_PLANTNET_API_KEY;
+      if (!apiKey || apiKey === "YOUR_PLANTNET_API_KEY_HERE") {
+        Alert.alert(
+          "Configuration Error", 
+          "PlantNet API key not configured. Please add your API key to the .env file."
+        );
+        return;
+      }
       
-      // Show top 5 results instead of just 2
-      setResults(data.summary.slice(0, 5));
+      // Direct PlantNet API call
+      const results = await identifyPlant(preview, "leaf", apiKey);
+      
+      // Show top 5 results
+      setResults(results.slice(0, 5));
     } catch (e: any) {
-      Alert.alert("Identification Failed", e.message || "Unknown error occurred");
+      let errorMessage = "Unknown error occurred";
+      
+      if (e.message.includes("401") || e.message.includes("unauthorized")) {
+        errorMessage = "Invalid PlantNet API key. Please check your configuration.";
+      } else if (e.message.includes("429") || e.message.includes("quota")) {
+        errorMessage = "API quota exceeded. Please try again later.";
+      } else if (e.message.includes("Failed to fetch")) {
+        errorMessage = "Network error. Please check your internet connection and try again.";
+      } else {
+        errorMessage = e.message || "Unknown error occurred";
+      }
+      
+      Alert.alert("Identification Failed", errorMessage);
     } finally {
       setLoading(false);
     }

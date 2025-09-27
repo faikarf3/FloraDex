@@ -47,8 +47,6 @@ export const createUserProfile = async (user: User, additionalData?: Partial<Use
       plantRef: 'placeholder',
       createdAt: serverTimestamp()
     });
-    
-    console.log('User profile and userPlants subcollection created successfully');
   } catch (error) {
     console.error('Error creating user profile:', error);
     throw error;
@@ -59,7 +57,6 @@ export const updateUserProfile = async (userId: string, updates: Partial<UserPro
   try {
     const userRef = doc(db, 'users', userId);
     await setDoc(userRef, updates, { merge: true });
-    console.log('User profile updated successfully');
   } catch (error) {
     console.error('Error updating user profile:', error);
     throw error;
@@ -80,7 +77,6 @@ export const addUserPlant = async (userId: string, plantRef: string): Promise<st
       plantCount: serverTimestamp() // This will be incremented properly in a real implementation
     }, { merge: true });
     
-    console.log('User plant added successfully');
     return plantDoc.id;
   } catch (error) {
     console.error('Error adding user plant:', error);
