@@ -23,6 +23,7 @@ interface IdentificationResult {
 
 export default function Scan() {
   const [preview, setPreview] = useState<string | null>(null);
+  const [url, setUrl] = useState("");
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState<IdentificationResult[] | null>(null);
 
