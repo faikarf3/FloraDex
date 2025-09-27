@@ -1,10 +1,8 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import {
   View,
-  Text,
   StyleSheet,
   Animated,
-  Platform,
   ActivityIndicator,
 } from 'react-native';
 import { colors } from '../constants/colors';
@@ -15,8 +13,8 @@ export default function SplashScreen() {
     BitcountSingleInk_400Regular,
   });
   
-  const fadeAnim = new Animated.Value(0);
-  const scaleAnim = new Animated.Value(0.8);
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const scaleAnim = useRef(new Animated.Value(0.8)).current;
 
   useEffect(() => {
     if (fontsLoaded) {
@@ -35,7 +33,7 @@ export default function SplashScreen() {
         }),
       ]).start();
     }
-  }, [fontsLoaded]);
+  }, [fadeAnim, fontsLoaded, scaleAnim]);
 
   if (!fontsLoaded) {
     return (
