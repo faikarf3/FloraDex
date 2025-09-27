@@ -5,22 +5,49 @@ import * as ImagePicker from "expo-image-picker";
 import { useState } from "react";
 import { ActivityIndicator, Alert, Button, Image, Text, View } from "react-native";
 
+
 export default function Scan() {
   const [preview, setPreview] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<{ label: string; score: number }[] | null>(null);
 
-  const pickFromLibrary = async () => {
-    const res = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images, quality: 0.9
-    });
-    if (!res.canceled) setPreview(res.assets[0].uri);
-  };
+  async function ensureMediaLibPerm() {
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (status !== "granted") {
+      Alert.alert("Permission required", "We need access to your photo library.");
+      return false;
+    }
+    return true;
+  }
+  
+  async function ensureCameraPerm() {
+    const { status } = await ImagePicker.requestCameraPermissionsAsync();
+    if (status !== "granted") {
+      Alert.alert("Permission required", "We need camera access to take a photo.");
+      return false;
+    }
+    return true;
+  }
 
-  const takePhoto = async () => {
-    const res = await ImagePicker.launchCameraAsync({ quality: 0.9 });
-    if (!res.canceled) setPreview(res.assets[0].uri);
+  const pickFromLibrary = async () => {
+    if (!(await ensureMediaLibPerm())) return;
+    const res = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      quality: 0.9,
+    });
+    if (!res.canceled && res.assets?.length) {
+      setPreview(res.assets[0].uri);
+    }
   };
+  
+  const takePhoto = async () => {
+    if (!(await ensureCameraPerm())) return;
+    const res = await ImagePicker.launchCameraAsync({ quality: 0.9 });
+    if (!res.canceled && res.assets?.length) {
+      setPreview(res.assets[0].uri);
+    }
+  };
+  
 
   const runIdentify = async () => {
     try {
