@@ -1,5 +1,7 @@
+import { colors } from '@/constants/colors';
 import { useAuth } from '@/contexts/AuthContext';
 import { Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function ProfileScreen() {
   const { user, logout } = useAuth();
@@ -46,13 +48,13 @@ export default function ProfileScreen() {
   };
 
   return (
-    <ScrollView style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.title}>Profile</Text>
         <Text style={styles.subtitle}>Manage your account and preferences</Text>
       </View>
 
-      <View style={styles.content}>
+      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         {/* Profile Header */}
         <View style={styles.profileHeader}>
           <View style={styles.avatar}>
@@ -134,38 +136,42 @@ export default function ProfileScreen() {
         <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
           <Text style={styles.logoutButtonText}>Logout</Text>
         </TouchableOpacity>
-      </View>
-    </ScrollView>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f8f9fa',
+    backgroundColor: colors.background,
   },
   header: {
-    backgroundColor: '#27ae60',
+    backgroundColor: colors.background,
     paddingHorizontal: 20,
-    paddingTop: 60,
-    paddingBottom: 20,
+    paddingVertical: 16,
+    alignItems: 'center',
   },
   title: {
     fontSize: 28,
-    fontWeight: 'bold',
-    color: '#fff',
+    fontWeight: '700',
+    color: colors.text.light,
     marginBottom: 4,
+    textAlign: 'center',
   },
   subtitle: {
     fontSize: 16,
-    color: '#fff',
+    color: colors.text.light,
     opacity: 0.9,
+    lineHeight: 22,
+    textAlign: 'center',
   },
   content: {
-    padding: 20,
+    flex: 1,
+    paddingHorizontal: 20,
   },
   profileHeader: {
-    backgroundColor: '#fff',
+    backgroundColor: colors.cards,
     borderRadius: 12,
     padding: 20,
     marginBottom: 20,
@@ -179,12 +185,14 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 3.84,
     elevation: 5,
+    borderWidth: 1,
+    borderColor: colors.border,
   },
   avatar: {
     width: 60,
     height: 60,
     borderRadius: 30,
-    backgroundColor: '#27ae60',
+    backgroundColor: colors.navbar,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 16,
@@ -192,7 +200,7 @@ const styles = StyleSheet.create({
   avatarText: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#fff',
+    color: colors.text.light,
   },
   profileInfo: {
     flex: 1,
@@ -200,21 +208,21 @@ const styles = StyleSheet.create({
   profileName: {
     fontSize: 20,
     fontWeight: '600',
-    color: '#2c3e50',
+    color: colors.text.primary,
     marginBottom: 4,
   },
   profileEmail: {
     fontSize: 16,
-    color: '#7f8c8d',
+    color: colors.text.muted,
   },
   editButton: {
-    backgroundColor: '#27ae60',
+    backgroundColor: colors.buttons,
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 6,
   },
   editButtonText: {
-    color: '#fff',
+    color: colors.text.light,
     fontSize: 14,
     fontWeight: '600',
   },
@@ -224,7 +232,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 20,
     fontWeight: '600',
-    color: '#2c3e50',
+    color: colors.text.primary,
     marginBottom: 12,
   },
   statsGrid: {
@@ -233,7 +241,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   statCard: {
-    backgroundColor: '#fff',
+    backgroundColor: colors.cards,
     borderRadius: 12,
     padding: 16,
     width: '48%',
@@ -247,20 +255,22 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 3.84,
     elevation: 5,
+    borderWidth: 1,
+    borderColor: colors.border,
   },
   statNumber: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#27ae60',
+    color: colors.navbar,
     marginBottom: 4,
   },
   statLabel: {
     fontSize: 12,
-    color: '#7f8c8d',
+    color: colors.text.muted,
     textAlign: 'center',
   },
   actionCard: {
-    backgroundColor: '#fff',
+    backgroundColor: colors.cards,
     borderRadius: 12,
     shadowColor: '#000',
     shadowOffset: {
@@ -270,13 +280,15 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 3.84,
     elevation: 5,
+    borderWidth: 1,
+    borderColor: colors.border,
   },
   actionItem: {
     flexDirection: 'row',
     alignItems: 'center',
     padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#f0f0f0',
+    borderBottomColor: colors.divider,
   },
   actionEmoji: {
     fontSize: 20,
@@ -285,14 +297,14 @@ const styles = StyleSheet.create({
   actionText: {
     flex: 1,
     fontSize: 16,
-    color: '#2c3e50',
+    color: colors.text.primary,
   },
   actionArrow: {
     fontSize: 20,
-    color: '#7f8c8d',
+    color: colors.text.muted,
   },
   infoCard: {
-    backgroundColor: '#fff',
+    backgroundColor: colors.cards,
     borderRadius: 12,
     padding: 16,
     shadowColor: '#000',
@@ -303,20 +315,22 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 3.84,
     elevation: 5,
+    borderWidth: 1,
+    borderColor: colors.border,
   },
   appDescription: {
     fontSize: 16,
-    color: '#7f8c8d',
+    color: colors.text.muted,
     lineHeight: 22,
     marginBottom: 12,
   },
   version: {
     fontSize: 14,
-    color: '#95a5a6',
+    color: colors.text.muted,
     textAlign: 'center',
   },
   logoutButton: {
-    backgroundColor: '#e74c3c',
+    backgroundColor: colors.error,
     paddingVertical: 16,
     paddingHorizontal: 20,
     borderRadius: 12,
@@ -325,7 +339,7 @@ const styles = StyleSheet.create({
     marginBottom: 40,
   },
   logoutButtonText: {
-    color: '#fff',
+    color: colors.text.light,
     fontSize: 18,
     fontWeight: '600',
   },

@@ -1,18 +1,31 @@
-rules_version='2'
+rules_version='2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
+    // Users can read and write their own profile
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+      
+      // Users can read and write their own userPlants subcollection
+      match /userPlants/{plantId} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+    }
+    
+    // Allow authenticated users to read and write plant collections
+    match /plants/{plantId} {
+      allow read, write: if request.auth != null;
+    }
+    
+    // Allow authenticated users to read and write user inventories
+    match /inventories/{inventoryId} {
+      allow read, write: if request.auth != null;
+    }
+    
+    // Temporary: Allow all authenticated users to read/write for development
+    // TODO: Implement proper security rules before production
     match /{document=**} {
-      // This rule allows anyone with your database reference to view, edit,
-      // and delete all data in your database. It is useful for getting
-      // started, but it is configured to expire after 30 days because it
-      // leaves your app open to attackers. At that time, all client
-      // requests to your database will be denied.
-      //
-      // Make sure to write security rules for your app before that time, or
-      // else all client requests to your database will be denied until you
-      // update your rules.
-      allow read, write: if request.time < timestamp.date(2025, 10, 26);
+      allow read, write: if request.auth != null;
     }
   }
 }
