@@ -1,9 +1,8 @@
 // config/firebase.ts
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getApp, getApps, initializeApp } from 'firebase/app';
-import { getAuth, getReactNativePersistence, initializeAuth } from 'firebase/auth';
+import { getAuth } from 'firebase/auth';
+import { getFirestore } from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
-import { Platform } from 'react-native';
 
 const firebaseConfig = {
   apiKey: process.env.EXPO_PUBLIC_FIREBASE_API_KEY,
@@ -17,19 +16,11 @@ const firebaseConfig = {
 
 const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
 
-// Avoid double-initialization during fast refresh
-let auth = getAuth(app);
-try {
-  if (Platform.OS !== 'web' && !auth.currentUser) {
-    // initializeAuth only once; if it throws, we already have auth
-    auth = initializeAuth(app, { persistence: getReactNativePersistence(AsyncStorage) });
-  }
-} catch {
-  auth = getAuth(app);
-}
+// Initialize auth - Firebase v9+ handles persistence automatically on React Native
+const auth = getAuth(app);
 
 const storage = getStorage(app);
+const db = getFirestore(app);
 
-
-export { auth, storage };
+export { auth, db, storage };
 export default app;
