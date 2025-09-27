@@ -28,7 +28,7 @@ export default function TabLayout() {
         options={{
           title: 'Inventory',
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="leaf" color={color} size={size} />
+            <Ionicons name="leaf-outline" color={color} size={size} />
           ),
         }}
       />
