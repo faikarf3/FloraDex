@@ -1,32 +1,19 @@
+import AuthWrapper from '@/components/AuthWrapper';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import 'react-native-reanimated';
-
-export const unstable_settings = {
-  anchor: '(tabs)',
-};
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 export default function RootLayout() {
   return (
-    <AuthProvider>
-      <ThemeProvider value={DefaultTheme}>
-        <Stack>
-          {/* Tabs group (main dashboard + other tabs) */}
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-
-          {/* Modal screen */}
-          <Stack.Screen
-            name="add-plant-modal"
-            options={{
-              presentation: 'modal', // 👈 makes it slide up like Twitter compose
-              headerShown: false,
-            }}
-          />
-        </Stack>
-        <StatusBar style="auto" />
-      </ThemeProvider>
-    </AuthProvider>
+    <SafeAreaProvider>
+      <AuthProvider>
+        <ThemeProvider value={DefaultTheme}>
+          <AuthWrapper />
+          <StatusBar style="auto" />
+        </ThemeProvider>
+      </AuthProvider>
+    </SafeAreaProvider>
   );
 }

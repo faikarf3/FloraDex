@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { View, ActivityIndicator, StyleSheet } from 'react-native';
-import { useAuth } from '../contexts/AuthContext';
+import { Stack } from 'expo-router';
+import { useEffect, useState } from 'react';
+import { ActivityIndicator, StyleSheet, View } from 'react-native';
 import LoginScreen from '../app/LoginScreen';
-import DashboardScreen from '../app/DashboardScreen';
 import SplashScreen from '../app/SplashScreen';
 import { colors } from '../constants/colors';
+import { useAuth } from '../contexts/AuthContext';
 
 export default function AuthWrapper() {
   const { user, loading } = useAuth();
@@ -31,7 +31,17 @@ export default function AuthWrapper() {
     );
   }
 
-  return user ? <DashboardScreen /> : <LoginScreen />;
+  if (user) {
+    // User is authenticated, show the tabs
+    return (
+      <Stack>
+        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+      </Stack>
+    );
+  } else {
+    // User is not authenticated, show login screen
+    return <LoginScreen />;
+  }
 }
 
 const styles = StyleSheet.create({
